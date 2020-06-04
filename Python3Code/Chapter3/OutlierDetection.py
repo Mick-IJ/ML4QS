@@ -21,14 +21,14 @@ class DistributionBasedOutlierDetection:
 
     # Finds outliers in the specified column of datatable and adds a binary column with
     # the same name extended with '_outlier' that expresses the result per data point.
-    def chauvenet(self, data_table, col):
+    def chauvenet(self, data_table, col, c=2):
         # Taken partly from: https://www.astro.rug.nl/software/kapteyn/
 
         # Computer the mean and standard deviation.
         mean = data_table[col].mean()
         std = data_table[col].std()
         N = len(data_table.index)
-        criterion = 1.0/(2*N)
+        criterion = 1.0/(c*N)
 
         # Consider the deviation for the data points.
         deviation = abs(data_table[col] - mean)/std
@@ -50,12 +50,12 @@ class DistributionBasedOutlierDetection:
 
     # Fits a mixture model towards the data expressed in col and adds a column with the probability
     # of observing the value given the mixture model.
-    def mixture_model(self, data_table, col):
+    def mixture_model(self, data_table, col, n_components=3):
 
         print('Applying mixture models')
         # Fit a mixture model to our data.
         data = data_table[data_table[col].notnull()][col]
-        g = GaussianMixture(n_components=3, max_iter=100, n_init=1)
+        g = GaussianMixture(n_components=n_components, max_iter=100, n_init=1)
         reshaped_data = np.array(data.values.reshape(-1,1))
         g.fit(reshaped_data)
 

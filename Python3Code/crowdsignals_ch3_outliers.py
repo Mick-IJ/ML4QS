@@ -55,23 +55,23 @@ def main():
 
         # And try out all different approaches. Note that we have done some optimization
         # of the parameter values for each of the approaches by visual inspection.
-        dataset = OutlierDistr.chauvenet(dataset, col)
+        dataset = OutlierDistr.chauvenet(dataset, col, c=3)  # update c
         DataViz.plot_binary_outliers(dataset, col, col + '_outlier')
-        dataset = OutlierDistr.mixture_model(dataset, col)
+        dataset = OutlierDistr.mixture_model(dataset, col, n_components=5)  # update n_components
         DataViz.plot_dataset(dataset, [col, col + '_mixture'], ['exact','exact'], ['line', 'points'])
         # This requires:
         # n_data_points * n_data_points * point_size =
         # 31839 * 31839 * 32 bits = ~4GB available memory
 
         try:
-            dataset = OutlierDist.simple_distance_based(dataset, [col], 'euclidean', 0.10, 0.99)
+            dataset = OutlierDist.simple_distance_based(dataset, [col], 'euclidean', 0.2, 0.99)
             DataViz.plot_binary_outliers(dataset, col, 'simple_dist_outlier')
         except MemoryError as e:
             print('Not enough memory available for simple distance-based outlier detection...')
             print('Skipping.')
 
         try:
-            dataset = OutlierDist.local_outlier_factor(dataset, [col], 'euclidean', 5)
+            dataset = OutlierDist.local_outlier_factor(dataset, [col], 'euclidean', 7)
             DataViz.plot_dataset(dataset, [col, 'lof'], ['exact','exact'], ['line', 'points'])
         except MemoryError as e:
             print('Not enough memory available for lof...')
