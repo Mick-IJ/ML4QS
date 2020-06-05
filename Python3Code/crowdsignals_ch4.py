@@ -47,22 +47,22 @@ window_sizes = [int(float(5000)/milliseconds_per_instance), int(float(0.5*60000)
 
 NumAbs = NumericalAbstraction()
 dataset_copy = copy.deepcopy(dataset)
-for ws in window_sizes:
-    dataset_copy = NumAbs.abstract_numerical(dataset_copy, ['acc_phone_x'], ws, 'mean')
-    dataset_copy = NumAbs.abstract_numerical(dataset_copy, ['acc_phone_x'], ws, 'std')
+#for ws in window_sizes:
+#    dataset_copy = NumAbs.abstract_numerical(dataset_copy, ['acc_phone_x'], ws, 'mean')
+#    dataset_copy = NumAbs.abstract_numerical(dataset_copy, ['acc_phone_x'], ws, 'std')
 
-DataViz.plot_dataset(dataset_copy, ['acc_phone_x', 'acc_phone_x_temp_mean', 'acc_phone_x_temp_std', 'label'], ['exact', 'like', 'like', 'like'], ['line', 'line', 'line', 'points'])
+#DataViz.plot_dataset(dataset_copy, ['acc_phone_x', 'acc_phone_x_temp_mean', 'acc_phone_x_temp_std', 'label'], ['exact', 'like', 'like', 'like'], ['line', 'line', 'line', 'points'])
 
-ws = int(float(0.5*60000)/milliseconds_per_instance)
-selected_predictor_cols = [c for c in dataset.columns if not 'label' in c]
-dataset = NumAbs.abstract_numerical(dataset, selected_predictor_cols, ws, 'mean')
-dataset = NumAbs.abstract_numerical(dataset, selected_predictor_cols, ws, 'std')
+#ws = int(float(0.5*60000)/milliseconds_per_instance)
+#selected_predictor_cols = [c for c in dataset.columns if not 'label' in c]
+#dataset = NumAbs.abstract_numerical(dataset, selected_predictor_cols, ws, 'mean')
+#dataset = NumAbs.abstract_numerical(dataset, selected_predictor_cols, ws, 'std')
 
-DataViz.plot_dataset(dataset, ['acc_phone_x', 'gyr_phone_x', 'hr_watch_rate', 'light_phone_lux', 'mag_phone_x', 'press_phone_', 'pca_1', 'label'], ['like', 'like', 'like', 'like', 'like', 'like', 'like','like'], ['line', 'line', 'line', 'line', 'line', 'line', 'line', 'points'])
+#DataViz.plot_dataset(dataset, ['acc_phone_x', 'gyr_phone_x', 'hr_watch_rate', 'light_phone_lux', 'mag_phone_x', 'press_phone_', 'pca_1', 'label'], ['like', 'like', 'like', 'like', 'like', 'like', 'like','like'], ['line', 'line', 'line', 'line', 'line', 'line', 'line', 'points'])
 
 
-CatAbs = CategoricalAbstraction()
-dataset = CatAbs.abstract_categorical(dataset, ['label'], ['like'], 0.03, int(float(5*60000)/milliseconds_per_instance), 2)
+#CatAbs = CategoricalAbstraction()
+#dataset = CatAbs.abstract_categorical(dataset, ['label'], ['like'], 0.03, int(float(5*60000)/milliseconds_per_instance), 2)
 
 # Now we move to the frequency domain, with the same window size.
 
