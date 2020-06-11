@@ -20,8 +20,8 @@ from pathlib import Path
 def main():
 
     # Set up file names and locations.
-    DATA_PATH = Path('./intermediate_datafiles/')
-    DATASET_FNAME = sys.argv[1] if len(sys.argv) > 1 else 'chapter2_result.csv'
+    DATA_PATH = Path('./intermediate_datafiles/Own_data/')
+    DATASET_FNAME = sys.argv[1] if len(sys.argv) > 1 else 'phyphox_data.csv'
     RESULT_FNAME = sys.argv[2] if len(sys.argv) > 2 else 'chapter3_result_outliers.csv'
 
     # Next, import the data from the specified location and parse the date index.
@@ -42,7 +42,7 @@ def main():
     # Step 1: Let us see whether we have some outliers we would prefer to remove.
 
     # Determine the columns we want to experiment on.
-    outlier_columns = ['acc_phone_x', 'light_phone_lux']
+    outlier_columns = ['Acc_x', 'Acc_y']
 
     # Create the outlier classes.
     OutlierDistr = DistributionBasedOutlierDetection()
