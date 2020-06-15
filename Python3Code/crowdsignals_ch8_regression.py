@@ -25,7 +25,7 @@ from pathlib import Path
 from sklearn.model_selection import train_test_split
 
 # Set up file names and locations.
-DATA_PATH = Path('./intermediate_datafiles/')
+DATA_PATH = Path('./intermediate_datafiles/Crowdsignal/')
 DATASET_FNAME = sys.argv[1] if len(sys.argv) > 1 else 'chapter2_result.csv'
 RESULT_FNAME = sys.argv[2] if len(sys.argv) > 2 else 'chapter3_result_outliers.csv'
 
@@ -43,7 +43,7 @@ DataViz = VisualizeDataset(__file__)
 # Of course we repeat some stuff from Chapter 3, namely to load the dataset
 
 # Read the result from the previous chapter, and make sure the index is of the type datetime.
-DATA_PATH = Path('./intermediate_datafiles/')
+DATA_PATH = Path('./intermediate_datafiles/Crowdsignal/')
 DATASET_FNAME = 'chapter5_result.csv'
 
 DataViz = VisualizeDataset(__file__)
@@ -94,7 +94,7 @@ selected_features = ['temp_pattern_labelOnTable','labelOnTable', 'temp_pattern_l
                      'pca_1_temp_mean_ws_120','pca_2_temp_mean_ws_120','pca_2','acc_watch_y_temp_mean_ws_120','gyr_watch_y_pse',
                      'gyr_watch_x_pse']
 possible_feature_sets = [basic_features, features_after_chapter_3, features_after_chapter_4, features_after_chapter_5, selected_features]
-feature_names = ['initial set', 'Chapter 3', 'Chapter 4', 'Chapter 5', 'Selected features']
+feature_names = ['initial set', 'Selected features']#'Chapter 3', 'Chapter 4', 'Chapter 5', 'Selected features']
 
 # Let us first study whether the time series is stationary and what the autocorrelations are.
 
@@ -148,6 +148,8 @@ for i in range(0, len(possible_feature_sets)):
         performance_te_res += mean_te
         performance_te_res_std += std_te
 
+        print(selected_train_X)
+        print(train_y)
         regr_train_y, regr_test_y = learner.recurrent_neural_network(selected_train_X, train_y, selected_test_X, test_y, gridsearch=True)
 
         mean_tr, std_tr = eval.mean_squared_error_with_std(train_y.iloc[washout_time:,], regr_train_y.iloc[washout_time:,])
