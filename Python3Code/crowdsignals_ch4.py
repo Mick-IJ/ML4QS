@@ -51,14 +51,17 @@ NumAbs = NumericalAbstraction()
 
 #DataViz.plot_dataset(dataset_copy, ['acc_x', 'acc_x_temp_mean', 'acc_x_temp_std', 'label'], ['exact', 'like', 'like', 'like'], ['line', 'line', 'line', 'points'])
 
-ws = 4
-selected_predictor_cols = ['heartrate','acc_x', 'acc_y', 'acc_z']
+selected_predictor_cols = ['heartrate','acc_x', 'acc_y', 'acc_z', 'pca_1', 'pca_2']
+
+ws = 6
 print('mean')
 dataset = NumAbs.abstract_numerical(dataset, selected_predictor_cols, ws, 'mean')
 print('std')
 dataset = NumAbs.abstract_numerical(dataset, selected_predictor_cols, ws, 'std')
 print('slope')
 dataset = NumAbs.abstract_numerical(dataset, selected_predictor_cols, ws, 'slope')
+print('min')
+dataset = NumAbs.abstract_numerical(dataset, selected_predictor_cols, ws, 'min')
 
 #DataViz.plot_dataset(dataset, ['acc_phone_x', 'gyr_phone_x', 'hr_watch_rate', 'light_phone_lux', 'mag_phone_x', 'press_phone_', 'pca_1', 'label'], ['like', 'like', 'like', 'like', 'like', 'like', 'like','like'], ['line', 'line', 'line', 'line', 'line', 'line', 'line', 'points'])
 
@@ -69,22 +72,22 @@ dataset = NumAbs.abstract_numerical(dataset, selected_predictor_cols, ws, 'slope
 # Now we move to the frequency domain, with the same window size.
 
 FreqAbs = FourierTransformation()
-fs = float(1/30)
+fs = float(1/10)
 
-periodic_predictor_cols = ['heartrate','acc_x', 'acc_y', 'acc_z']
+periodic_predictor_cols = ['heartrate','acc_x', 'acc_y', 'acc_z', 'pca_1', 'pca_2']
 #data_table = FreqAbs.abstract_frequency(copy.deepcopy(dataset), ['acc_phone_x'], 4, fs)
 
 # Spectral analysis.
 
 #DataViz.plot_dataset(data_table, ['acc_phone_x_max_freq', 'acc_phone_x_freq_weighted', 'acc_phone_x_pse', 'label'], ['like', 'like', 'like', 'like'], ['line', 'line', 'line','points'])
 
-dataset = FreqAbs.abstract_frequency(dataset, periodic_predictor_cols, 4, fs)
+dataset = FreqAbs.abstract_frequency(dataset, periodic_predictor_cols, 6, fs)
 
 # Now we only take a certain percentage of overlap in the windows, otherwise our training examples will be too much alike.
 
 # The percentage of overlap we allow
-window_overlap = 0.5
-skip_points = int((1-window_overlap) * 4)
+window_overlap = 0.9
+skip_points = int((1-window_overlap) * 6)
 dataset = dataset.iloc[::skip_points,:]
 
 

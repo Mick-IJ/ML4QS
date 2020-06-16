@@ -103,7 +103,7 @@ DataViz.plot_xy(x=[range(1, len(selected_predictor_cols)+1)], y=[pc_values],
 
 # We select 7 as the best number of PC's as this explains most of the variance
 
-n_pcs = 5
+n_pcs = 2
 
 dataset = PCA.apply_pca(copy.deepcopy(dataset), selected_predictor_cols, n_pcs)
 
@@ -112,7 +112,6 @@ dataset = PCA.apply_pca(copy.deepcopy(dataset), selected_predictor_cols, n_pcs)
 DataViz.plot_dataset(dataset, ['pca_', 'label'], ['like', 'like'], ['line', 'points'])
 
 # And the overall final dataset:
-print(dataset.columns)
 DataViz.plot_dataset(dataset, ['acc_x', 'acc_y', 'acc_z', 'heartrate', 'pca_', 'label'],
                               ['like', 'like', 'like', 'like', 'like', 'like'],
                               ['line', 'line', 'line', 'line', 'line', 'points'])

@@ -34,9 +34,7 @@ class VisualizeDataset:
 
 
     def save(self, plot_obj, formats=('png',)): # 'svg'
-
         fig_name = f'figure_{self.plot_number}'
-
         for format in formats:
             save_path = self.figures_dir / f'{fig_name}.{format}'
             plot_obj.savefig(save_path)
@@ -106,8 +104,9 @@ class VisualizeDataset:
         # Make sure we get a nice figure with only a single x-axis and labels there.
         plt.setp([a.get_xticklabels() for a in f.axes[:-1]], visible=False)
         plt.xlabel('time')
-        #self.save(plt)
+        self.save(plt)
         plt.show()
+
 
     def plot_xy(self, x, y, method='plot', xlabel=None, ylabel=None, xlim=None, ylim=None, names=None,
                 line_styles=None, loc=None, title=None):

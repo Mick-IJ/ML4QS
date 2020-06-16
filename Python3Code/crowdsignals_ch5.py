@@ -40,7 +40,7 @@ DataViz = VisualizeDataset(__file__)
 clusteringNH = NonHierarchicalClustering()
 
 # Let us look at k-means first.
-k_values = range(2, 10)
+k_values = range(2, 4)
 silhouette_values = []
 
 ## Do some initial runs to determine the right number for k
