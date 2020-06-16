@@ -29,7 +29,7 @@ class CreateDataset:
     # Create an initial data table with entries from start till end time, with steps
     # of size granularity. Granularity is specified in milliseconds
     def create_timestamps(self, start_time, end_time):
-        return pd.date_range(start_time, end_time, freq=str(self.granularity)+'ms')
+        return pd.date_range(start_time, end_time, freq=str(self.granularity)+'s')
 
     def create_dataset(self, start_time, end_time, cols, prefix):
         c = copy.deepcopy(cols)
@@ -45,7 +45,7 @@ class CreateDataset:
         dataset = pd.read_csv(self.base_dir / file, skipinitialspace=True)
 
         # Convert timestamps to dates
-        dataset[timestamp_col] = pd.to_datetime(dataset[timestamp_col])
+        dataset[timestamp_col] = pd.to_datetime(dataset[timestamp_col], unit='s')
 
         # Create a table based on the times found in the dataset
         if self.data_table is None:
@@ -60,7 +60,7 @@ class CreateDataset:
             relevant_rows = dataset[
                 (dataset[timestamp_col] >= self.data_table.index[i]) &
                 (dataset[timestamp_col] < (self.data_table.index[i] +
-                                           timedelta(milliseconds=self.granularity)))
+                                           timedelta(seconds=self.granularity)))
             ]
             for col in value_cols:
                 # Take the average value
@@ -78,34 +78,34 @@ class CreateDataset:
 
     # Add data in which we have rows that indicate the occurrence of a certain event with a given start and end time.
     # 'aggregation' can be 'sum' or 'binary'.
-    def add_event_dataset(self, file, start_timestamp_col, end_timestamp_col, value_col, aggregation='sum'):
+    def add_event_dataset(self, file, timestamp_col, value_col, aggregation='sum'):
         print(f'Reading data from {file}')
         dataset = pd.read_csv(self.base_dir / file)
 
         # Convert timestamps to datetime.
-        dataset[start_timestamp_col] = pd.to_datetime(dataset[start_timestamp_col])
-        dataset[end_timestamp_col] = pd.to_datetime(dataset[end_timestamp_col])
+        dataset[timestamp_col] = pd.to_datetime(dataset[timestamp_col], unit='s')
+        #dataset[end_timestamp_col] = pd.to_datetime(dataset[end_timestamp_col], unit='s')
 
         # Clean the event values in the dataset
-        dataset[value_col] = dataset[value_col].apply(self.clean_name)
+        dataset[value_col] = dataset[value_col].astype('str').apply(self.clean_name)
         event_values = dataset[value_col].unique()
 
         # Add columns for all possible values (or create a new dataset if empty), set the default to 0 occurrences
         if self.data_table is None:
-            self.create_dataset(min(dataset[start_timestamp_col]), max(dataset[end_timestamp_col]), event_values, value_col)
+            self.create_dataset(min(dataset[timestamp_col]), max(dataset[timestamp_col]), event_values, value_col)
         for col in event_values:
             self.data_table[(str(value_col) + str(col))] = 0
 
         # Now we need to start counting by passing along the rows....
         for i in range(0, len(dataset.index)):
             # identify the time points of the row in our dataset and the value
-            start = dataset[start_timestamp_col][i]
-            end = dataset[end_timestamp_col][i]
+            start = dataset[timestamp_col][i]
+            end = dataset[timestamp_col][i]
             value = dataset[value_col][i]
-            border = (start - timedelta(milliseconds=self.granularity))
+            border = (start - timedelta(seconds=self.granularity))
 
             # get the right rows from our data table
-            relevant_rows = self.data_table[(start <= (self.data_table.index +timedelta(milliseconds=self.granularity))) & (end > self.data_table.index)]
+            relevant_rows = self.data_table[(start <= (self.data_table.index +timedelta(seconds=self.granularity))) & (end > self.data_table.index)]
 
             # and add 1 to the rows if we take the sum
             if aggregation == 'sum':

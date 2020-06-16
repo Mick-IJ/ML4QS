@@ -39,23 +39,24 @@ class FourierTransformation:
 
         # Pass over the dataset (we cannot compute it when we do not have enough history)
         # and compute the values.
-        for i in range(window_size, len(data_table.index)):
-            for col in cols:
+
+        for col in cols:
+            print(col)
+            for i in range(window_size, len(data_table.index)):
                 real_ampl, imag_ampl = self.find_fft_transformation(data_table[col][i-window_size:min(i+1, len(data_table.index))], sampling_rate)
 
                 # We only look at the real part in this implementation.
                 for j in range(0, len(freqs)):
                     data_table.iloc[i, data_table.columns.get_loc(f'{col}_freq_{freqs[j]}_Hz_ws_{window_size}')] = real_ampl[j]
                 # And select the dominant frequency. We only consider the positive frequencies for now.
-
                 data_table.iloc[i, data_table.columns.get_loc(f'{col}_max_freq')] = freqs[np.argmax(real_ampl[0:len(real_ampl)])]
-                data_table.iloc[i, data_table.columns.get_loc(f'{col}_freq_weighted')] = float(np.sum(freqs * real_ampl)) / np.sum(real_ampl)
+                data_table.iloc[i, data_table.columns.get_loc(f'{col}_freq_weighted')] = float(np.sum(freqs * real_ampl)) / (np.sum(real_ampl) + 1/100000.)
 
                 for k, freq in enumerate(freqs):
                     data_table.iloc[i, data_table.columns.get_loc(f'{col}_freq{freq}_ampl')] = real_ampl[k]
 
                 PSD = np.divide(np.square(real_ampl),float(len(real_ampl)))
-                PSD_pdf = np.divide(PSD, np.sum(PSD))
+                PSD_pdf = np.divide(PSD, np.sum(PSD)+1/10000.)
 
                 # Make sure there are no zeros.
                 if np.count_nonzero(PSD_pdf) == PSD_pdf.size:

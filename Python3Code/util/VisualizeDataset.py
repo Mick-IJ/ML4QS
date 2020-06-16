@@ -81,8 +81,6 @@ class VisualizeDataset:
             max_values = []
             min_values = []
 
-
-
             # Pass through the relevant columns.
             for j in range(0, len(relevant_cols)):
                 # Create a mask to ignore the NaN values when plotting:
@@ -101,13 +99,14 @@ class VisualizeDataset:
             xar[i].tick_params(axis='y', labelsize=10)
             xar[i].legend(relevant_cols, fontsize='xx-small', numpoints=1, loc='upper center',
                           bbox_to_anchor=(0.5, 1.3), ncol=len(relevant_cols), fancybox=True, shadow=True)
+
             xar[i].set_ylim([min(min_values) - 0.1*(max(max_values) - min(min_values)),
                              max(max_values) + 0.1*(max(max_values) - min(min_values))])
 
         # Make sure we get a nice figure with only a single x-axis and labels there.
         plt.setp([a.get_xticklabels() for a in f.axes[:-1]], visible=False)
         plt.xlabel('time')
-        self.save(plt)
+        #self.save(plt)
         plt.show()
 
     def plot_xy(self, x, y, method='plot', xlabel=None, ylabel=None, xlim=None, ylim=None, names=None,
@@ -134,7 +133,7 @@ class VisualizeDataset:
     def plot_dataset_boxplot(self, dataset, cols):
         plt.Figure(); dataset[cols].plot.box()
         plt.ylim([-30,30])
-        self.save(plt)
+        #self.save(plt)
         plt.show()
 
     # This function plots the real and imaginary amplitudes of the frequencies found in the Fourier transformation.

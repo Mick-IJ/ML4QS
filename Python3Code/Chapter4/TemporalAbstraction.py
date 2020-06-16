@@ -32,7 +32,7 @@ class NumericalAbstraction:
             # For the slope we need a bit more work.
             # We create time points, assuming discrete time steps with fixed delta t:
             times = np.array(range(0, len(data.index)))
-            data = data.as_matrix().astype(np.float32)
+            data = data.to_numpy().astype(np.float32)
 
             # Check for NaN's
             mask = ~np.isnan(data)

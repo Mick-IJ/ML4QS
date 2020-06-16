@@ -19,7 +19,7 @@ from Chapter4.FrequencyAbstraction import FourierTransformation
 from Chapter4.TextAbstraction import TextAbstraction
 
 # Read the result from the previous chapter, and make sure the index is of the type datetime.
-DATA_PATH = Path('./intermediate_datafiles/')
+DATA_PATH = Path('./intermediate_datafiles/Assignment3/')
 DATASET_FNAME = sys.argv[1] if len(sys.argv) > 1 else 'chapter3_result_final.csv'
 RESULT_FNAME = sys.argv[2] if len(sys.argv) > 2 else 'chapter4_result.csv'
 
@@ -35,29 +35,30 @@ dataset.index = pd.to_datetime(dataset.index)
 DataViz = VisualizeDataset(__file__)
 
 # Compute the number of milliseconds covered by an instance based on the first two rows
-milliseconds_per_instance = (dataset.index[1] - dataset.index[0]).microseconds/1000
-
 
 # Chapter 4: Identifying aggregate attributes.
 
 # First we focus on the time domain.
 
-# Set the window sizes to the number of instances representing 5 seconds, 30 seconds and 5 minutes
-window_sizes = [int(float(5000)/milliseconds_per_instance), int(float(0.5*60000)/milliseconds_per_instance), int(float(5*60000)/milliseconds_per_instance)]
+# Set the window sizes to the number of instances representing 2 minutes and 5 minutes
 
 NumAbs = NumericalAbstraction()
-dataset_copy = copy.deepcopy(dataset)
-for ws in window_sizes:
-    dataset_copy = NumAbs.abstract_numerical(dataset_copy, ['acc_phone_x'], ws, 'mean')
-    dataset_copy = NumAbs.abstract_numerical(dataset_copy, ['acc_phone_x'], ws, 'std')
-    dataset_copy = NumAbs.abstract_numerical(dataset_copy, ['acc_phone_x'], ws, 'slope')
+#dataset_copy = copy.deepcopy(dataset)
+#for ws in window_sizes:
+#    dataset_copy = NumAbs.abstract_numerical(dataset_copy, ['acc_x'], ws, 'mean')
+#    dataset_copy = NumAbs.abstract_numerical(dataset_copy, ['acc_x'], ws, 'std')
+#    dataset_copy = NumAbs.abstract_numerical(dataset_copy, ['acc_x'], ws, 'slope')
 
-#DataViz.plot_dataset(dataset_copy, ['acc_phone_x', 'acc_phone_x_temp_mean', 'acc_phone_x_temp_std', 'label'], ['exact', 'like', 'like', 'like'], ['line', 'line', 'line', 'points'])
+#DataViz.plot_dataset(dataset_copy, ['acc_x', 'acc_x_temp_mean', 'acc_x_temp_std', 'label'], ['exact', 'like', 'like', 'like'], ['line', 'line', 'line', 'points'])
 
-#ws = int(float(0.5*60000)/milliseconds_per_instance)
-#selected_predictor_cols = [c for c in dataset.columns if not 'label' in c]
-#dataset = NumAbs.abstract_numerical(dataset, selected_predictor_cols, ws, 'mean')
-#dataset = NumAbs.abstract_numerical(dataset, selected_predictor_cols, ws, 'std')
+ws = 4
+selected_predictor_cols = ['heartrate','acc_x', 'acc_y', 'acc_z']
+print('mean')
+dataset = NumAbs.abstract_numerical(dataset, selected_predictor_cols, ws, 'mean')
+print('std')
+dataset = NumAbs.abstract_numerical(dataset, selected_predictor_cols, ws, 'std')
+print('slope')
+dataset = NumAbs.abstract_numerical(dataset, selected_predictor_cols, ws, 'slope')
 
 #DataViz.plot_dataset(dataset, ['acc_phone_x', 'gyr_phone_x', 'hr_watch_rate', 'light_phone_lux', 'mag_phone_x', 'press_phone_', 'pca_1', 'label'], ['like', 'like', 'like', 'like', 'like', 'like', 'like','like'], ['line', 'line', 'line', 'line', 'line', 'line', 'line', 'points'])
 
@@ -68,27 +69,27 @@ for ws in window_sizes:
 # Now we move to the frequency domain, with the same window size.
 
 FreqAbs = FourierTransformation()
-fs = float(1000)/milliseconds_per_instance
+fs = float(1/30)
 
-periodic_predictor_cols = ['acc_phone_x','acc_phone_y','acc_phone_z','acc_watch_x','acc_watch_y','acc_watch_z','gyr_phone_x','gyr_phone_y',
-                           'gyr_phone_z','gyr_watch_x','gyr_watch_y','gyr_watch_z','mag_phone_x','mag_phone_y','mag_phone_z',
-                           'mag_watch_x','mag_watch_y','mag_watch_z']
-data_table = FreqAbs.abstract_frequency(copy.deepcopy(dataset), ['acc_phone_x'], int(float(10000)/milliseconds_per_instance), fs)
+periodic_predictor_cols = ['heartrate','acc_x', 'acc_y', 'acc_z']
+#data_table = FreqAbs.abstract_frequency(copy.deepcopy(dataset), ['acc_phone_x'], 4, fs)
 
 # Spectral analysis.
 
-DataViz.plot_dataset(data_table, ['acc_phone_x_max_freq', 'acc_phone_x_freq_weighted', 'acc_phone_x_pse', 'label'], ['like', 'like', 'like', 'like'], ['line', 'line', 'line','points'])
+#DataViz.plot_dataset(data_table, ['acc_phone_x_max_freq', 'acc_phone_x_freq_weighted', 'acc_phone_x_pse', 'label'], ['like', 'like', 'like', 'like'], ['line', 'line', 'line','points'])
 
-dataset = FreqAbs.abstract_frequency(dataset, periodic_predictor_cols, int(float(10000)/milliseconds_per_instance), fs)
+dataset = FreqAbs.abstract_frequency(dataset, periodic_predictor_cols, 4, fs)
 
 # Now we only take a certain percentage of overlap in the windows, otherwise our training examples will be too much alike.
 
 # The percentage of overlap we allow
-window_overlap = 0.9
-skip_points = int((1-window_overlap) * ws)
+window_overlap = 0.5
+skip_points = int((1-window_overlap) * 4)
 dataset = dataset.iloc[::skip_points,:]
 
 
 dataset.to_csv(DATA_PATH / RESULT_FNAME)
 
-DataViz.plot_dataset(dataset, ['acc_phone_x', 'gyr_phone_x', 'hr_watch_rate', 'light_phone_lux', 'mag_phone_x', 'press_phone_', 'pca_1', 'label'], ['like', 'like', 'like', 'like', 'like', 'like', 'like','like'], ['line', 'line', 'line', 'line', 'line', 'line', 'line', 'points'])
+DataViz.plot_dataset(dataset, ['heartrate', 'acc_x', 'acc_y', 'acc_z', 'label'],
+                     ['like', 'like', 'like', 'like', 'like',],
+                     ['line', 'line', 'line', 'line', 'points'])
